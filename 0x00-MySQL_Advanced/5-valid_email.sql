@@ -6,6 +6,6 @@ FOR EACH ROW
 BEGIN
   IF NEW.email <> OLD.email THEN
     UPDATE users
-    SET NEW.valid_email = default_value;
+    SET NEW.valid_email = 0;
     END IF;
 END;
