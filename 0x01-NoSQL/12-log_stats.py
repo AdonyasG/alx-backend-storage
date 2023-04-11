@@ -13,7 +13,6 @@ if __name__ == "__main__":
     print("Methods:")
 
     methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
-    counts = collection.count_documents({"method": {"$in": methods}})
     for method in methods:
         count = collection.count_documents({"method": method})
         print("\tmethod {}: {}".format(method, count))
