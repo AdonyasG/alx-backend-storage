@@ -42,8 +42,8 @@ def count_history(method: Callable) -> Callable:
         then return the output.
         """
 
-        input_key = method.__qualname__ + ":inputs"
-        output_key = method.__qualname__ + ":outputs"
+        input_key = "{}:inputs".format(method.__qualname__)
+        output_key = "{}:outputs".format(method.__qualname__)
 
         self._redis.rpush(input_key, str(args))
 
