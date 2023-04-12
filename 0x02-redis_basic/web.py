@@ -2,27 +2,23 @@
 """
 Module - web
 """
-import requests
 import redis
-
+import requests
 
 r = redis.Redis()
 
 
 def get_page(url: str) -> str:
     """get page"""
-    count_key = f"count:{url}"
-    content_key = f"content:{url}"
-    content = r.get(content_key)
+    cached_page = r.get(url)
+    if cached_page is not None:
+        return cached_page.decode('utf-8')
 
-    if content:
-        return content.decode('utf-8')
-    else:
-        response = requests.get(url)
+    response = requests.get(url)
+    page_content = response.content.decode('utf-8')
 
-        content = response.content.decode('utf-8')
-        r.set(content_key, content, ex=10)
+    r.set(url, page_content, ex=10)
 
-        r.incr(count_key)
+    r.incr(f'count:{url}')
 
-        return content
+    return page_content
