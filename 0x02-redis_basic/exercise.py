@@ -10,15 +10,15 @@ import functools
 
 def count_calls(method: Callable) -> Callable:
     """
-    decorator takes a single method argument e  
-    and returns a new function that wraps 
+    decorator takes a single method argument
+    and returns a new function that wraps
     the original method
     """
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs) -> Any:
         """
         gets the qualified name of the method using the __qualname__ attribute
-        and uses it as the Redis key to store the count of calls. 
+        and uses it as the Redis key to store the count of calls.
         It then increments the count using the Redis INCR
         """
         if isinstance(self._redis, redis.Redis):
@@ -26,6 +26,7 @@ def count_calls(method: Callable) -> Callable:
             self._redis.incr(key)
             return fn(self, *args, **kwargs)
     return wrapper
+
 
 class Cache:
     """cache in a redis storage"""
