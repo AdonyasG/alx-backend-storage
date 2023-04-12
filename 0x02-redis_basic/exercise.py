@@ -21,9 +21,10 @@ def count_calls(fn: Callable) -> Callable:
         and uses it as the Redis key to store the count of calls. 
         It then increments the count using the Redis INCR
         """
-        key = fn.__qualname__
-        self._redis.incr(key)
-        return fn(self, *args, **kwargs)
+        if isinstance(self._redis, redis.Redis):
+            key = fn.__qualname__
+            self._redis.incr(key)
+            return fn(self, *args, **kwargs)
     return wrapper
 
 class Cache:
