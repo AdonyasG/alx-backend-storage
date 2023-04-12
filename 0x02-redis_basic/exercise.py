@@ -29,7 +29,7 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
-def count_history(method: Callable) -> Callable:
+def call_history(method: Callable) -> Callable:
     """
     decorated function’s qualified name and append ":inputs" and ":outputs"
     to create input and output list keys, respectively.
@@ -63,7 +63,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
-    @count_history
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """store the data by setting key and data"""
         key = str(uuid.uuid4())
