@@ -2,6 +2,7 @@
 """
 Module - exercise
 """
+import json
 import redis
 import uuid
 from typing import Union, Callable, Any
@@ -28,6 +29,32 @@ def count_calls(method: Callable) -> Callable:
     return wrapper
 
 
+def count_history(method: Callable) -> Callable:
+    """
+    decorated function’s qualified name and append ":inputs" and ":outputs"
+    to create input and output list keys, respectively.
+    """
+    @functools.wraps(method)
+    def wrapper(self, *args, **kwargs) -> Any:
+        """
+        wrapped function to retrieve the output.
+        Store the output using rpush in the "...:outputs" list,
+        then return the output.
+        """
+
+        input_key = method.__qualname__ + ":inputs"
+        output_key = method.__qualname__ + ":outputs"
+
+        self._redis.rpush(input_key, str(args))
+
+        output = method(self, *args, **kwargs)
+
+        self._redis.rpush(output_key, output)
+
+        return output
+    return wrapper
+
+
 class Cache:
     """cache in a redis storage"""
     def __init__(self, host='localhost', port=6379) -> None:
@@ -36,6 +63,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @count_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """store the data by setting key and data"""
         key = str(uuid.uuid4())
