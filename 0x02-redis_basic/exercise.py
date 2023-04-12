@@ -4,18 +4,18 @@ Module - exercise
 """
 import redis
 import uuid
-from typing import Union, Callable
+from typing import Union, Callable, Any
 import functools
 
 
 def count_calls(fn: Callable) -> Callable:
     """
-    decorator takes a single method argument 
+    decorator takes a single method argument e  
     and returns a new function that wraps 
     the original method
     """
     @functools.wraps(fn)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(self, *args, **kwargs) -> Any:
         """
         gets the qualified name of the method using the __qualname__ attribute
         and uses it as the Redis key to store the count of calls. 
