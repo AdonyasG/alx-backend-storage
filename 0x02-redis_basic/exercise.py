@@ -19,3 +19,20 @@ class Cache:
         key = str(uuid.uuid4())
         self._redis.set(key, data)
         return key
+
+    def get(self, key, fn=None):
+        """get method that take a key string argument"""
+        data = self._redis.get(key)
+
+        if fn:
+            return fn(data)
+
+        return data
+
+    def get_str(self, key):
+        """parametrize wit the correct conversion fun"""
+        return self.get(key, fn=str)
+
+    def get_int(self, key):
+        """parametrize wit the correct conversion fun"""
+        return self.get(key, fn=int)
